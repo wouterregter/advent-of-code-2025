@@ -2,8 +2,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 fn main() -> std::io::Result<()> {
-
-    let mut file = File::open("input.txt")?;
+    let mut file = File::open("data/day1/input.txt")?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
 
@@ -14,7 +13,7 @@ fn main() -> std::io::Result<()> {
     for line in contents.lines() {
         let direction = &line[0..1];
         let magnitude = &line[1..].parse::<i32>().unwrap();
-        
+
         match direction {
             "L" => current = (current - magnitude + 100).rem_euclid(100),
             "R" => current = (current + magnitude).rem_euclid(100),
@@ -24,8 +23,7 @@ fn main() -> std::io::Result<()> {
         if current == 0 {
             counter += 1
         }
-    
-    };
+    }
     println!("answer part 1: {counter}");
 
     // Part 2
@@ -35,7 +33,7 @@ fn main() -> std::io::Result<()> {
     for line in contents.lines() {
         let direction = &line[0..1];
         let magnitude = &line[1..].parse::<i32>().unwrap();
-        
+
         match direction {
             "L" => {
                 if (current - magnitude) <= 0 {
@@ -49,12 +47,11 @@ fn main() -> std::io::Result<()> {
                 } else {
                     // println!("current: {current}, dir: {direction}, mag: {magnitude} added to counter: 0");
                 }
-                current = ((current - magnitude).rem_euclid(100))
-                ;
-            },
+                current = (current - magnitude).rem_euclid(100);
+            }
             "R" => {
                 if (current + magnitude) > 99 {
-                    let mut added_to_counter = ((current + magnitude) / 100);
+                    let added_to_counter = (current + magnitude) / 100;
                     // println!("current: {current}, dir: {direction}, mag: {magnitude} added to counter: {added_to_counter}");
                     counter += added_to_counter;
                 }
@@ -62,8 +59,7 @@ fn main() -> std::io::Result<()> {
             }
             _ => {}
         }
-    
-    };
+    }
     println!("answer 2: {counter}");
 
     Ok(())
