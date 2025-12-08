@@ -2,14 +2,7 @@ fn in_bounds(grid: &[Vec<char>], i: i32, j: i32) -> bool {
     i >= 0 && i < grid.len() as i32 && j >= 0 && j < grid[0].len() as i32
 }
 
-fn main() -> std::io::Result<()> {
-    let contents = std::fs::read_to_string("data/day4/input.txt")?;
-
-    let grid: Vec<Vec<char>> = contents
-        .lines()
-        .map(|line| line.chars().collect())
-        .collect();
-
+fn remove_rolls(mut grid: Vec<Vec<char>>) -> (Vec<Vec<char>>, usize) {
     let dirs: Vec<(i32, i32)> = vec![
         (-1, -1),
         (-1, 0),
@@ -22,10 +15,11 @@ fn main() -> std::io::Result<()> {
     ];
 
     let mut accessible_roll_count = 0;
+    let mut pos_to_remove = Vec::new();
 
-    for (i, _) in grid.iter().enumerate() {
-        for (j, _) in grid[0].iter().enumerate() {
-            if grid[i as usize][j as usize] != '@' {
+    for i in 0..grid.len() {
+        for j in 0..grid[0].len() {
+            if grid[i][j] != '@' {
                 continue;
             }
             let mut roll_count = 0;
@@ -40,12 +34,49 @@ fn main() -> std::io::Result<()> {
             }
             if roll_count < 4 {
                 accessible_roll_count += 1;
-                println!("accessible roll at pos {i}, {j}");
+                pos_to_remove.push((i, j));
+                // println!("accessible roll at pos {i}, {j}");
             }
         }
     }
 
-    println!("{accessible_roll_count}");
+    for (i, j) in pos_to_remove {
+        grid[i][j] = '.';
+    }
+    return (grid, accessible_roll_count);
+}
+
+fn main() -> std::io::Result<()> {
+    let contents = std::fs::read_to_string("data/day4/input.txt")?;
+
+    // part 1
+
+    let grid: Vec<Vec<char>> = contents
+        .lines()
+        .map(|line| line.chars().collect())
+        .collect();
+
+    let (_, accessible_roll_count) = remove_rolls(grid);
+    println!("answer part 1: {accessible_roll_count}");
+
+    // part 2
+
+    let mut grid: Vec<Vec<char>> = contents
+        .lines()
+        .map(|line| line.chars().collect())
+        .collect();
+    let mut removed_rolls = 0;
+
+    loop {
+        let (new_grid, accessible_roll_count) = remove_rolls(grid);
+        if accessible_roll_count < 1 {
+            break;
+        }
+        removed_rolls += accessible_roll_count;
+        grid = new_grid;
+    }
+
+    println!("answer part 2: {removed_rolls}");
 
     // println!("{:?}", grid);
     Ok(())
