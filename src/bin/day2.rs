@@ -1,10 +1,7 @@
-use std::fs::File;
-use std::io::prelude::*;
+use std::fs;
 
 fn main() -> std::io::Result<()> {
-    let mut file = File::open("data/day2/input.txt")?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
+    let contents = fs::read_to_string("data/day2/input.txt")?;
 
     // part 1
 
